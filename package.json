@@ -1,0 +1,23 @@
+{
+  "name": "video-streaming-annotation",
+  "version": "1.0.0",
+  "description": "video live streaming via WebSockets & Base64 with arrow annotation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mbenfriha/video-streaming-annotation.git"
+  },
+  "author": "benfriha mohamed",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mbenfriha/video-streaming-annotation/issues"
+  },
+  "homepage": "https://github.com/mbenfriha/video-streaming-annotation#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "ws": "^6.0.0"
+  }
+}

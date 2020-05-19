@@ -1,0 +1,76 @@
+<html>
+<head>
+    <title>I am the Streamer</title>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <style>
+        .arrow2 {
+            animation: slide2 1s ease-in-out infinite;
+            position:absolute;
+            top: 10px;
+            left: 10px;
+            color:red;
+            display: none;
+            z-index:999;
+            font-size:40px;
+        }
+
+        @keyframes slide2 {
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(45deg);
+            }
+
+            50% {
+                transform: translate(10px, 10px) rotate(45deg);
+            }
+        }
+
+        #cam-draw {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+<div id="cam-draw">
+    <video autoplay></video>
+    <i class="fa fa-long-arrow-right arrow2" aria-hidden="true"></i>
+</div>
+    <script>
+        // get video dom element
+        const video = document.querySelector('video');
+        
+        // request access to webcam
+        navigator.mediaDevices.getUserMedia({video: {width: 426, height: 240}}).then((stream) => video.srcObject = stream);
+        
+        // returns a frame encoded in base64
+        const getFrame = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            const data = canvas.toDataURL('image/png');
+            return data;
+        }
+        const WS_URL = location.origin.replace(/^http/, 'ws');
+        const FPS = 10;
+        const ws = new WebSocket(WS_URL);
+        ws.onopen = () => {
+            console.log(`Connected to ${WS_URL}`);
+            setInterval(() => {
+                ws.send(JSON.stringify({type: "cam", img: getFrame()}));
+            }, 1000 / FPS);
+        }
+        ws.onmessage = e => {
+            var object = JSON.parse(e.data);
+
+            //display arrow if click event
+            if(object.type == 'click') {
+                $('.arrow2').css({top: object.cell.y+'px', left: object.cell.x+'px'});
+                $('.arrow2').show();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<html>
+<head>
+    <title>Client watch video</title>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <style>
+
+        .arrow2 {
+            animation: slide2 1s ease-in-out infinite;
+            position:absolute;
+            top: 10px;
+            left: 10px;
+            color:red;
+            display: none;
+            z-index:999;
+            font-size:40px;
+        }
+
+        @keyframes slide2 {
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(45deg);
+            }
+
+            50% {
+                transform: translate(10px, 10px) rotate(45deg);
+            }
+        }
+
+        #cam-draw {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+<div id="cam-draw">
+    <img  id="cam" src="">
+    <i class="fa fa-long-arrow-right arrow2" id="arrow" aria-hidden="true"></i>
+</div>
+
+    <script>
+        // get img dom element
+        const img = document.querySelector('img');
+        
+        const WS_URL = location.origin.replace(/^http/, 'ws');
+        const ws = new WebSocket(WS_URL);
+        ws.onopen = () => console.log(`Connected to ${WS_URL}`);
+        ws.onmessage = message => {
+            var object = JSON.parse(message.data);
+            if(object.type == 'cam') {
+                img.src = object.img;
+
+            }
+            // set the base64 string to the src tag of the image
+        }
+
+        $("#cam-draw").click(function(e) {
+            //get x:y position
+            newX = Math.round((e.offsetX-43)/10)*10;
+            newY = Math.round((e.offsetY-45)/10)*10;
+
+            if(e.target.id !== 'arrow') {
+
+                // set arrow position
+                $('#arrow').css({top: newY+'px', left: newX+'px'});
+                $('#arrow').show();
+                ws.send(JSON.stringify({type: "click", cell: {x: newX, y:newY}}))
+            } else {
+                //hide arrow for streamer
+                ws.send(JSON.stringify({type: "click", cell: {x: -100, y:-100}}))
+
+            }
+
+
+        })
+
+        //hide arrow for viewer
+        $('#arrow').click(function(e) {
+            $('#arrow').css({display: 'none'});
+        })
+
+    </script>
+</body>
+</html>
