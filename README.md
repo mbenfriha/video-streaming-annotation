@@ -3,11 +3,12 @@ video live streaming via WebSockets & Base64 with arrow annotation
 
 ## Installation
 ```text
+npm install -g nodemon
 npm install
 ```
 ## Usage
 ```text
-npm run start
+nodemon
 ```
 
 - Go to */streamer*
